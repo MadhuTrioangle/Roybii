@@ -1,0 +1,184 @@
+	desc "Create on Development and Appstore Connect"
+lane :create_app do
+	create_app_online #produce
+	
+end
+
+platform :ios do 
+	before_all do
+		Dotenv.load ".env.ios"
+	end 
+	desc "sync signing"
+	lane :signing do 
+
+	sync_code_signing #match
+		register_devices(
+                       devices:{
+                               	"Trioangle Testing 1" => "bc88dfb3848a4ad7eea80ded2d0cfd5978c6ec68",
+                              	"Trioangle Testing 2" => "2037082d0d019f5059ea369ffc30a6f1e17402fd",
+                        		"Trioangle Procdut 1" => "a69eec7dccfeb2b50273c7c5709c06601b759edc",
+				"Trioangle Procdut 3" => "6f090c94dccf4095d5cc2dbc766ace6d102d5c3f",
+				"Trioangle Procdut 4" => "2875df8292cf2ac66a549008d675f799736a1ec6",
+				"Trioangle Procdut 5" => "4b5e5b3e98c20738dbac3095a4c3b20c6363113a"                             
+				}
+                    )
+
+
+	cert
+    	produce(
+      		enable_services: {
+                                push_notification: "on",                  # Valid values: "on", "off"
+                                sign_in_with_apple: "on",                 # Valid values: "on", "off"
+                        }
+
+     	)
+	
+
+#     	sigh(force: true)
+# 	build_app(xcargs: "-allowProvisioningUpdates")
+
+	end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	desc "Build binary"
+
+	lane :build do
+		signing
+		build_ios_app(
+
+			clean: true,
+xcargs: "-allowProvisioningUpdates",
+ 			export_options: {
+    				signingStyle: 'automatic',
+				}
+	
+			)
+		enable_automatic_code_signing
+	end
+
+
+
+
+
+    desc "screenshot"
+
+    lane :snap do
+snapshot(
+    clean: true,
+    clear_previous_screenshots: true,
+    devices: [
+      "iPhone 11"
+    ],
+    erase_simulator: true,
+    dark_mode: false,
+    languages: [
+      "en-US",
+    ],
+    number_of_retries: 0,
+    scheme: "someScheme"
+  )
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	desc "Release" 
+
+	lane :release do 
+
+	automatic_code_signing(
+		use_automatic_signing: true
+		)
+
+#		build
+upload_to_app_store(
+      skip_screenshots: true,
+      force: true, # Skip HTML report verification
+      submit_for_review: false,
+      run_precheck_before_submit: false,
+      skip_metadata: true,
+	  itc_provider:"9YCG5Q4JD7"
+    )			
+	puts(“ Karthi Fastlane Release  Successfully”)
+   		clean_build_artifacts
+
+	end
+
+
+
+
+lane :distribute do
+	build
+        firebase_app_distribution(
+            app: "1:977242414593:ios:c2e48bbb911b4866de6a00",
+            testers: "testing@trioangle.com",
+            release_notes: "Lots of amazing new features to test out!"
+#firebase_cli_path: “/usr/local/bin/firebase”,
+#   ipa_path: "/Users/trioangle/Documents/client/jorge/ios/gofereats_1.3.1_ios/gofereats_user_ios_1.3.1/build/OrdenarComida.ipa"
+        )
+
+    end
+end
+
+#lane :upload_to_firebase do
+ #Step 1 — Build your app, my suggestion is gym
+ #Step 2 — Upload to firebase app distribution
+# firebase_app_distribution(
+ #  app: “com.ordenarcomida”,
+ #  testers: “testing@trioangle.com”,
+  # groups: “testing”,
+  # release_notes: "ordenarcomida",
+  # firebase_cli_path: “/usr/local/bin/firebase*”,
+  # ipa_path: "/Users/trioangle/Documents/client/jorge/ios/gofereats_1.3.1_ios/gofereats_user_ios_1.3.1/build/OrdenarComida.ipa"
+ #)
+#end
+
+
+
+
+lane :build_without_xcode do
+    download_image_assets(app)
+
+build_app(
+  scheme: "Release",
+  export_options: {
+    method: "app-store",
+    provisioningProfiles: { 
+      "com.abdulhameed.gofereats" => "match AppStore com.abdulhameed.gofereats 1600516249",
+  #    "com.example.bundleid2" => "Provisioning Profile Name 2"
+    }
+  }
+)
+end

@@ -1,0 +1,13 @@
+//
+//  zodeak.xcconfig
+//  Runner
+//
+//  Created by trioangle on 25/11/22.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+// sed -i '' 's/Jenkin_Bundle_name/com.zodeak.testadmin1/g' zodeak.xcconfig
+
+USER_BUNDLE_ID = com.zodeakx.trade
+APP_NAME = Zodeak X

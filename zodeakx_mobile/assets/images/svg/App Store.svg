@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="175" height="65" viewBox="0 0 175 65">
+  <defs>
+    <clipPath id="clip-App_Store">
+      <rect width="175" height="65"/>
+    </clipPath>
+  </defs>
+  <g id="App_Store" data-name="App Store" clip-path="url(#clip-App_Store)">
+    <rect id="Rectangle_17068" data-name="Rectangle 17068" width="170" height="60" rx="5" transform="translate(3 3)" fill="#12161c"/>
+    <text id="App_Store-2" data-name="App Store" transform="translate(54 49)" fill="#fff" font-size="18" font-family="GoogleSans-Bold, Google Sans" font-weight="700"><tspan x="0" y="0">App Store</tspan></text>
+    <text id="Download_from" data-name="Download from" transform="translate(54 25)" fill="#fff" font-size="15" font-family="GoogleSans-Regular, Google Sans"><tspan x="0" y="0">Download from</tspan></text>
+    <path id="Icon_awesome-apple" data-name="Icon awesome-apple" d="M25.566,21.268a7.5,7.5,0,0,1,4.017-6.813,8.633,8.633,0,0,0-6.805-3.583c-2.852-.225-5.97,1.663-7.111,1.663-1.205,0-3.969-1.583-6.138-1.583-4.483.072-9.248,3.575-9.248,10.7a20.025,20.025,0,0,0,1.157,6.524c1.028,2.949,4.74,10.18,8.613,10.059,2.025-.048,3.455-1.438,6.09-1.438,2.555,0,3.881,1.438,6.138,1.438,3.9-.056,7.263-6.629,8.243-9.585a7.965,7.965,0,0,1-4.957-7.384ZM21.018,8.075A7.567,7.567,0,0,0,22.947,2.25a8.52,8.52,0,0,0-5.455,2.8,7.686,7.686,0,0,0-2.057,5.777C17.531,10.992,19.444,9.915,21.018,8.075Z" transform="translate(13.477 10.756)" fill="#fff"/>
+  </g>
+</svg>

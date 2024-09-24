@@ -1,0 +1,33 @@
+// To parse this JSON data, do
+//
+//     final commonModel = commonModelFromJson(jsonString);
+
+import 'dart:convert';
+
+class CommonModel {
+    CommonModel({
+        this.statusCode,
+        this.statusMessage,
+        this.typename,
+    });
+
+    int? statusCode;
+    String? statusMessage;
+    String? typename;
+
+    factory CommonModel.fromRawJson(String str) => CommonModel.fromJson(json.decode(str));
+
+    String toRawJson() => json.encode(toJson());
+
+    factory CommonModel.fromJson(Map<String, dynamic> json) => CommonModel(
+        statusCode: json["status_code"] == null ? null : json["status_code"],
+        statusMessage: json["status_message"] == null ? null : json["status_message"],
+        typename: json["__typename"] == null ? null : json["__typename"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "status_code": statusCode == null ? null : statusCode,
+        "status_message": statusMessage == null ? null : statusMessage,
+        "__typename": typename == null ? null : typename,
+    };
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="71.975" height="78.301" viewBox="0 0 71.975 78.301">
+  <g id="Group_572" data-name="Group 572" transform="translate(-120.017)">
+    <g id="Icon_ionic-md-stats" data-name="Icon ionic-md-stats" transform="translate(120.216)">
+      <path id="Path_476" data-name="Path 476" d="M12.375,4.5h13.05V82.8H12.375Z" transform="translate(7.2 -4.5)" fill="#f0b80c"/>
+      <path id="Path_477" data-name="Path 477" d="M5.625,23.625h13.05V46.463H5.625Z" transform="translate(-5.625 31.838)" fill="#f0b80c"/>
+      <path id="Path_478" data-name="Path 478" d="M19.125,19.125h13.05V55.013H19.125Z" transform="translate(20.025 23.288)" fill="#f0b80c"/>
+      <path id="Path_479" data-name="Path 479" d="M25.875,12.375h13.05V67.838H25.875Z" transform="translate(32.85 10.463)" fill="#f0b80c"/>
+    </g>
+    <g id="Icon_ionic-md-stats-2" data-name="Icon ionic-md-stats" transform="translate(120.017 55.463)">
+      <path id="Path_476-2" data-name="Path 476" d="M12.375,4.5h13.05V27.337H12.375Z" transform="translate(7.2 -4.5)"/>
+      <path id="Path_477-2" data-name="Path 477" d="M5.625,23.625h13.05V33.07H5.625Z" transform="translate(-5.625 -10.233)"/>
+      <path id="Path_478-2" data-name="Path 478" d="M19.125,19.125h13.05v15.5H19.125Z" transform="translate(20.025 -11.79)"/>
+      <path id="Path_479-2" data-name="Path 479" d="M25.875,12.375h13.05v21.2H25.875Z" transform="translate(32.85 -10.741)"/>
+    </g>
+  </g>
+</svg>

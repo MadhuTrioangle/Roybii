@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffe253"/>
+      <stop offset="1" stop-color="#f6ca18"/>
+    </linearGradient>
+    <filter id="Rectangle_17400" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#fc0" flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_867" data-name="Group 867" transform="translate(-11 -426)">
+    <g transform="matrix(1, 0, 0, 1, 11, 426)" filter="url(#Rectangle_17400)">
+      <rect id="Rectangle_17400-2" data-name="Rectangle 17400" width="30" height="30" rx="15" transform="translate(9 6)" fill="url(#linear-gradient)"/>
+    </g>
+    <path id="Icon_awesome-exclamation" data-name="Icon awesome-exclamation" d="M5.125,10.8a2,2,0,1,1-2-2A2,2,0,0,1,5.125,10.8ZM1.356.63l.34,6.8A.6.6,0,0,0,2.3,8H3.954a.6.6,0,0,0,.6-.57l.34-6.8a.6.6,0,0,0-.6-.63H1.956A.6.6,0,0,0,1.356.63Z" transform="translate(31.875 441)" fill="#fff"/>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
+  <defs>
+    <clipPath id="clip-trade_analysis">
+      <rect width="100" height="100"/>
+    </clipPath>
+  </defs>
+  <g id="trade_analysis" data-name="trade analysis" clip-path="url(#clip-trade_analysis)">
+    <g id="trade_analysis-2" data-name="trade analysis" transform="translate(3 -3.6)">
+      <path id="Path_405" data-name="Path 405" d="M267.22,51.453a1.544,1.544,0,0,0,.965.353,1.058,1.058,0,0,0,.241-.019L309.161,45.2a1.478,1.478,0,0,0,1.225-1.707A42.708,42.708,0,0,0,268.185,7.6,1.489,1.489,0,0,0,266.7,9.085V50.339A1.446,1.446,0,0,0,267.22,51.453Z" transform="translate(-217.206)" fill="#72798b"/>
+      <path id="Path_406" data-name="Path 406" d="M44.224,86.157V45.385A1.489,1.489,0,0,0,42.739,43.9a42.73,42.73,0,1,0,24.7,77.591,1.484,1.484,0,0,0,.353-2.06Z" transform="translate(0 -29.563)" fill="#72798b"/>
+      <path id="Path_407" data-name="Path 407" d="M317.369,234.224a1.444,1.444,0,0,0-.594-.965,1.481,1.481,0,0,0-1.113-.26l-40.735,6.588a1.5,1.5,0,0,0-1.132.891,1.463,1.463,0,0,0,.167,1.429l23.847,33.664a1.54,1.54,0,0,0,.965.612,1.058,1.058,0,0,0,.241.019,1.424,1.424,0,0,0,.854-.278,42.659,42.659,0,0,0,18.02-34.871A42.317,42.317,0,0,0,317.369,234.224Z" transform="translate(-222.89 -183.551)" fill="#72798b"/>
+    </g>
+  </g>
+</svg>

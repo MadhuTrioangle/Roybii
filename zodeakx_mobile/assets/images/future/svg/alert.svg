@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <g id="P2P_alert" data-name="P2P alert" transform="translate(-20 -432)">
+    <path id="Rectangle_17400" data-name="Rectangle 17400" d="M15,0A15,15,0,1,1,0,15,15,15,0,0,1,15,0Z" transform="translate(20 432)" fill="#DC3545"/>
+    <path id="Icon_awesome-exclamation" data-name="Icon awesome-exclamation" d="M5.125,10.8a2,2,0,1,1-2-2A2,2,0,0,1,5.125,10.8ZM1.356.63l.34,6.8A.6.6,0,0,0,2.3,8H3.954a.6.6,0,0,0,.6-.57l.34-6.8a.6.6,0,0,0-.6-.63H1.956a.6.6,0,0,0-.6.63Z" transform="translate(31.875 441)" fill="#1a1a1a"/>
+  </g>
+</svg>

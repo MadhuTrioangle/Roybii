@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ff5353"/>
+      <stop offset="1" stop-color="#ff4d15"/>
+    </linearGradient>
+    <filter id="Rectangle_17406" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="red" flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_868" data-name="Group 868" transform="translate(-11 -610)">
+    <g transform="matrix(1, 0, 0, 1, 11, 610)" filter="url(#Rectangle_17406)">
+      <rect id="Rectangle_17406-2" data-name="Rectangle 17406" width="30" height="30" rx="15" transform="translate(9 6)" fill="url(#linear-gradient)"/>
+    </g>
+    <path id="Union_12" data-name="Union 12" d="M21795,3637a8,8,0,1,1,8,8A8.007,8.007,0,0,1,21795,3637Zm2.5,0a5.508,5.508,0,0,0,5.5,5.5,5.386,5.386,0,0,0,2.9-.838l-7.566-7.565A5.387,5.387,0,0,0,21797.5,3637Zm2.6-4.669,7.57,7.57a5.384,5.384,0,0,0,.832-2.9,5.509,5.509,0,0,0-5.5-5.5A5.394,5.394,0,0,0,21800.1,3632.332Z" transform="translate(-21767.5 -3005.5)" fill="#fff"/>
+  </g>
+</svg>

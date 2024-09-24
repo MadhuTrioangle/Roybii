@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_17075" data-name="Rectangle 17075" width="95" height="95" fill="#72798b"/>
+    </clipPath>
+    <clipPath id="clip-trade_rules">
+      <rect width="100" height="100"/>
+    </clipPath>
+  </defs>
+  <g id="trade_rules" data-name="trade rules" clip-path="url(#clip-trade_rules)">
+    <g id="Group_436" data-name="Group 436" transform="translate(3 3)">
+      <g id="Group_435" data-name="Group 435" clip-path="url(#clip-path)">
+        <path id="Path_408" data-name="Path 408" d="M87.578,34.653V22.266A11.145,11.145,0,0,0,76.445,11.133H61.874a14.844,14.844,0,1,0,0,7.422H76.445a3.715,3.715,0,0,1,3.711,3.711V32.656A14.87,14.87,0,0,0,65.782,43.789H29.218a14.843,14.843,0,1,0-21.8,16.558V72.734A11.145,11.145,0,0,0,18.555,83.867H33.126a14.844,14.844,0,1,0,0-7.422H18.555a3.715,3.715,0,0,1-3.711-3.711V62.344A14.87,14.87,0,0,0,29.218,51.211H65.782a14.844,14.844,0,1,0,21.8-16.558M47.5,22.266a7.422,7.422,0,1,1,7.422-7.422A7.43,7.43,0,0,1,47.5,22.266m0,50.469a7.422,7.422,0,1,1-7.422,7.422A7.43,7.43,0,0,1,47.5,72.734M14.844,54.922A7.422,7.422,0,1,1,22.266,47.5a7.43,7.43,0,0,1-7.422,7.422m65.313,0A7.422,7.422,0,1,1,87.578,47.5a7.43,7.43,0,0,1-7.422,7.422" fill="#72798b"/>
+      </g>
+    </g>
+  </g>
+</svg>

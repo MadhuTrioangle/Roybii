@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24.647" height="22.752" viewBox="0 0 24.647 22.752">
+  <g id="Icon_ionic-md-qr-scanner" data-name="Icon ionic-md-qr-scanner" transform="translate(0)">
+    <path id="Path_203" data-name="Path 203" d="M6.219,8.067a.707.707,0,0,1,.723-.723h4.017V4.5H7A3.6,3.6,0,0,0,3.375,8.067v4.017H6.219Z" transform="translate(-3.375 -4.5)" fill="#afafaf"/>
+    <path id="Path_204" data-name="Path 204" d="M27.63,4.5H23.625V7.344h3.981a.738.738,0,0,1,.758.723v4.017h2.844V8.067A3.562,3.562,0,0,0,27.63,4.5Z" transform="translate(-6.562 -4.5)" fill="#afafaf"/>
+    <path id="Path_205" data-name="Path 205" d="M28.365,26.458a.707.707,0,0,1-.723.723H23.625v2.9h4.017a3.6,3.6,0,0,0,3.567-3.626V22.5H28.365Z" transform="translate(-6.562 -7.332)" fill="#afafaf"/>
+    <path id="Path_206" data-name="Path 206" d="M6.942,27.181a.707.707,0,0,1-.723-.723V22.5H3.375v3.958A3.649,3.649,0,0,0,7,30.084h3.958v-2.9Z" transform="translate(-3.375 -7.332)" fill="#afafaf"/>
+  </g>
+</svg>

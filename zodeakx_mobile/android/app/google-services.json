@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "952688507162",
+    "project_id": "x-8a0e4",
+    "storage_bucket": "x-8a0e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952688507162:android:76b9379c0fd84bc4cd94a3",
+        "android_client_info": {
+          "package_name": "com.roybits.exchanges"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952688507162-mcugbfasrcc8llfdpfs4cpftr560o54l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.roybits.exchanges",
+            "certificate_hash": "0f8a1f823125e470ea50f515dcbd9c2c0d26809d"
+          }
+        },
+        {
+          "client_id": "952688507162-uo2ufl3li8uuo6v845uofhoi6dkbbc33.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.roybits.exchanges",
+            "certificate_hash": "8fb8e67bb82833a1239291c8498ca3cad4924ce8"
+          }
+        },
+        {
+          "client_id": "952688507162-tf9jlm2ilbsn4t4ofk58c2pli9ua4c0j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABbdQFjXb3cAl_CzeMmRbWfOwUkeX76iU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952688507162-n6u09176mn02l4p5se5fh71goakqruag.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "952688507162-r1k46psccig27hb9v5b496vd3inhllfi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.roybits.exchanges"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

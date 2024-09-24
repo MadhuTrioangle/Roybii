@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
+  <defs>
+    <clipPath id="clip-Trading_Data">
+      <rect width="100" height="100"/>
+    </clipPath>
+  </defs>
+  <g id="Trading_Data" data-name="Trading Data" clip-path="url(#clip-Trading_Data)">
+    <g id="trade" transform="translate(-5.46 -2.19)">
+      <rect id="Rectangle_17071" data-name="Rectangle 17071" width="17.327" height="18.867" rx="0.49" transform="translate(8.46 80.46)" fill="#72798b"/>
+      <rect id="Rectangle_17072" data-name="Rectangle 17072" width="18.063" height="30.618" rx="0.49" transform="translate(33.741 68.709)" fill="#72798b"/>
+      <rect id="Rectangle_17073" data-name="Rectangle 17073" width="18.063" height="38.298" rx="0.49" transform="translate(59.364 61.029)" fill="#72798b"/>
+      <rect id="Rectangle_17074" data-name="Rectangle 17074" width="18.063" height="58.293" rx="0.49" transform="translate(85.397 41.034)" fill="#72798b"/>
+      <path id="Path_404" data-name="Path 404" d="M90.112,38.075a.838.838,0,0,0,.53-.787V5.045A.855.855,0,0,0,89.8,4.19H57.972a.821.821,0,0,0-.77.53.838.838,0,0,0,.171.907L67.448,15.7l-17,17.6L43.6,26.46a7.116,7.116,0,0,0-10.058,0l-20.7,20.782a.855.855,0,0,0-.239.6V68.692a.855.855,0,0,0,.513.77.821.821,0,0,0,.924-.188L38.934,44.489l5.987,5.97a7.458,7.458,0,0,0,10.588,0L78.583,27.3l10.6,10.639a.924.924,0,0,0,.924.137Z" transform="translate(2.948)" fill="#72798b"/>
+    </g>
+  </g>
+</svg>

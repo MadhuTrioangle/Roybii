@@ -1,0 +1,1176 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>TradingView Advanced Charts demo</title>
+		<!-- Fix for iOS Safari zooming bug -->
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+
+		<script type="text/javascript" src="charting_library/charting_library.js"></script>		
+		<script type="text/javascript" src="axios.min.js"></script>
+		<script src="socket.io.js"></script>
+
+		<script type="text/javascript">		
+			// BINANCE CONFIG
+			var BINANCE_STATUS     	   = true;			
+			var BINANCE_SOCKET_URL     = ""
+			var BINANCE_API_URL    	   = ""			
+			let DYNAMIC_BINANCE_SOCKET = {}	
+			const DEFAULT_BINANCE_SOCKET_URL ="wss://stream.binance.com:9443/stream?streams="
+			const DEFAULT_BINANCE_API_URL 	 ="https://api.binance.com/api/v3/klines?symbol="
+
+			// OKX CONFIG
+			var OKX_STATUS   	 	     = false;			
+			var OKX_SOCKET_URL    	     = ""
+			var OKX_API_URL    	 	     = ""
+			let DYNAMIC_OKX_SOCKET       = {}	
+			const DEFAULT_OKX_SOCKET_URL = "wss://ws.okx.com:8443/ws/v5/business"
+			const DEFAULT_OKX_API_URL 	 = "https://www.okx.com/api/v5/"
+
+			// COMMON CONFIG
+			var TRADE_SYMBOLS	  	 = [];
+			var TV_CHART_INSTANCE;			
+			var ownSiteSocket	  	 = null;
+			var BACKEND_API_URL 	 = null;
+			var BACKEND_SOCKET_URL	 = null;
+			var SITE_NAME 	       	 = null
+			const DEFAULT_DURATION	 = "15m"	
+			const DEFAULT_INTERVAL 	 = "15";
+			var _subscriptions 	     = []
+			var channelString;
+			var CURRENT_PAIR="";
+
+
+			function createChannelString(symbolInfo) {
+				var channel     = symbolInfo.ticker.split(/[:/]/)    
+				const exchange  = channel[0] === 'GDAX' ? 'Coinbase' : channel[0]
+				const to        = channel[2]
+				const from      = channel[1]    
+				return `0~${exchange}~${from}~${to}`
+			}
+
+			function timeConverter(UNIX_timestamp){
+				var a = new Date(UNIX_timestamp * 1000);
+				return a.getTime();
+			}
+			
+		
+			// BINANCE AND OWN LIQUIDITY
+			function modifiedPair(pair){				
+				return pair.replace("/","")
+			}
+
+			// OKX LIQUIDITY
+			function modifiedOKXPair(pair){				
+				return pair.replace("/","-")
+			}
+
+			// -------------------------TRADE VIEW CHART API CALL - START --------------------------------
+			async function getTradeViewChartData(pair='ETH/BTC',duration=DEFAULT_DURATION,from = '',to='',limit="1000"){				
+				return new Promise(async(resolve,reject)=>{
+					try {
+						if( BINANCE_STATUS && !OKX_STATUS ){ 
+							pair = modifiedPair(pair)
+							let URL = BINANCE_API_URL+pair+"&interval="+duration+"&limit="+limit
+							if(from) URL += `&startTime=${from}` 
+							if(to) URL += `&endTime=${to}` 
+							let results = await axios.get(URL)							
+							if(results.status == 200 ){
+								resolve(results?.data)
+							}
+							else{
+								resolve([])								
+							}
+						}
+						else if( !BINANCE_STATUS && OKX_STATUS ){
+							pair      = modifiedOKXPair(pair)
+							pair      = pair.toUpperCase()
+							duration  = convertOKXInterval(duration)
+							let URL   = `${OKX_API_URL}market/candles?instId=${pair}&bar=${duration}`
+
+							if(to) URL += `&after=${to}`
+							if(from) URL += `&before=${from}`
+							URL += `&limit=${limit}`
+							let results = await axios.get(URL)
+
+							if(results.status == 200 ){
+								resolve(results?.data?.data?.reverse() || [])
+							}
+							else{
+								resolve([])
+							}
+						}
+						else{														
+							let ownSiteLiquidityData = await getKlineChartData(duration,pair)							
+							resolve(ownSiteLiquidityData)
+						}
+					} catch (error) {
+						console.log("getTradeViewChartData error",error)	
+						resolve([])
+					}
+				})
+			}
+
+			// OWN LIQUIDITY
+			async function getKlineChartData(duration,pair){
+				return new Promise(async(resolve,reject)=>{
+					try {						
+						const KLINE_CHART_QUERY =`query getKlines($data: getKlinesInput!){
+							getKlines(getKlinesData: $data){
+								status_code
+								status_message
+								result
+							}
+						}`								
+					
+						fetch(BACKEND_API_URL, {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								query       : KLINE_CHART_QUERY,
+								variables   : {data:{pair,duration}},
+								fetchPolicy : 'network-only',
+							}),
+						}).then((res) => res.json()).then((result) =>{  
+							console.log('getKlineChartData results',result)
+							if(result?.data?.getKlines?.status_code == 200 ){
+								resolve(result?.data?.getKlines?.result)
+							}
+							else{
+								resolve([])		
+							}
+						}).catch((error)=>{
+							console.log("getKlineData own data catch2 error",error)		
+							resolve([])		
+						});
+
+					} catch (error) {
+						console.log("getKlineChartData catch error",error)							
+						resolve([])		
+					}
+				})
+			}
+			// -------------------------TRADE VIEW CHART API CALL - END --------------------------------
+
+			// BINANCE AND OWN LIQUIDITY
+			function convertInterval(duration='1M') {				
+				switch(duration) {				
+					case '60': 
+						return '1h';					
+					case '240': 
+						return '4h';
+					case '1D': 
+						return '1d';
+					case '1W': 
+						return '1w';
+					case '1M': 
+						return '1M';						
+					default:
+						return duration+'m';
+				}
+			}
+
+			// OKX
+			function convertOKXInterval(duration='1M') {				
+				switch(duration) {				
+					case '1h': 
+						return '1H';					
+					case '1H': 
+						return '1H';					
+					case '1': 
+						return '1m';					
+					case '5': 
+						return '5m';					
+					case '15': 
+						return '15m';					
+					case '30': 
+						return '30m';					
+					case '60': 
+						return '1H';					
+					case '4H': 
+						return '4H';
+					case '240': 
+						return '4H';
+					case '1D': 
+						return '1D';
+					case '1W': 
+						return '1W';
+					case '4h': 
+						return '4H';
+					case '1d': 
+						return '1D';
+					case '1w': 
+						return '1W';
+					case '1M': 
+						return '1M';						
+					default:
+						return duration;
+				}
+			}
+
+			// -----------------------------------DISCONNECT SOCKET-START------------------------------- 
+			async function disconnectSocket(){
+				if( BINANCE_STATUS ){
+					return await disconnectBinanceKlineChartSocket()
+				}
+				else if( OKX_STATUS ){
+					return await disconnectOKXKlineChartSocket()
+				}
+				else{
+					return disconnectOwnSocket()
+				}
+			}
+			
+			// OWN LIQ
+			async function disconnectOwnSocket(){
+				console.log("ownSiteSocket",ownSiteSocket)
+				if(ownSiteSocket){
+					console.log("*** Disconnect OwnSocket ***")
+					ownSiteSocket.disconnect()		
+				} 
+				ownSiteSocket = null								
+				return true
+			}
+
+			// BINANCE
+			function disconnectBinanceKlineChartSocket(){
+				return new Promise((resolve,reject)=>{
+					console.log("DYNAMIC_BINANCE_SOCKET",DYNAMIC_BINANCE_SOCKET)
+					console.log("DYNAMIC_BINANCE_SOCKET",Object.keys(DYNAMIC_BINANCE_SOCKET))
+
+					let socketKeys = Object.keys(DYNAMIC_BINANCE_SOCKET)
+					if(socketKeys.length == 0 ) resolve(true)
+
+					for( let i =0;i<socketKeys.length;i++ ){
+						console.log('socketKeys',socketKeys[i])
+						let currentSocketKey = socketKeys[i]
+						let currentSocket    = DYNAMIC_BINANCE_SOCKET[currentSocketKey]
+						if( currentSocket.socket ){
+							let unsubscribeData = {
+								"method": "UNSUBSCRIBE",
+								"params":currentSocket.streamList,
+								"id"    : 312
+							}
+							currentSocket.socket.send(unsubscribeData)						
+							currentSocket.socket.close()
+							delete DYNAMIC_BINANCE_SOCKET[currentSocketKey]	
+							currentSocket.socket.onclose = (event) => {        
+								console.log("binanceSocket close event======================>",event)
+							}
+						}
+
+						if( socketKeys.length == i+1 ){
+							resolve(true)
+						}
+					}				
+				})	
+			}
+
+			// OKX
+			function disconnectOKXKlineChartSocket(){
+				return new Promise((resolve,reject)=>{					
+					console.log("DYNAMIC_OKX_SOCKET",DYNAMIC_OKX_SOCKET)
+					console.log("DYNAMIC_OKX_SOCKET",Object.keys(DYNAMIC_OKX_SOCKET))
+
+					let socketKeys = Object.keys(DYNAMIC_OKX_SOCKET)
+					if(socketKeys.length == 0 ) resolve(true)
+
+					for( let i =0;i<socketKeys.length;i++ ){
+						console.log('socketKeys',socketKeys[i])
+						let currentSocketKey = socketKeys[i]
+						let currentSocket    = DYNAMIC_OKX_SOCKET[currentSocketKey]
+						if( currentSocket.socket ){
+							currentSocket.streamList.op = 'unsubscribe';
+							currentSocket.socket.send(JSON.stringify(currentSocket.streamList));
+
+							delete DYNAMIC_OKX_SOCKET[currentSocketKey]	
+							currentSocket.socket.onclose = (event) => {        
+								console.log("OKX close event======================>",event)							
+							}
+						}
+
+						if( socketKeys.length == i+1 ){
+							resolve(true)
+						}
+					}
+				})	
+			}
+			// -----------------------------------DISCONNECT SOCKET-END-------------------------------
+
+			// -----------------------------------------GENEREATE SOCKET NO- START ------------------------------
+			let socketNo = 0;
+			function generateBinanceSocketNumber(){
+				return socketNo += 1;
+			}
+
+			let okxSocketNo = 0;
+			function generateOKXSocketNumber(){
+				return okxSocketNo += 1;
+			}
+			// -----------------------------------------GENEREATE SOCKET NO- END ------------------------------
+			
+
+			// -----------------------------------------CONNECT SOCKET -START -----------------------------------
+
+			function connectSocket(pair,resolution='1d'){
+				if( BINANCE_STATUS && !OKX_STATUS ){
+					connectBinanceKlineChartSocket(pair,resolution)
+				}
+				else if( !BINANCE_STATUS && OKX_STATUS ){
+					connectOKXKlineChartSocket(pair,resolution)
+				}
+				else{
+					ownSitesocketConnect(pair)
+				}				
+			}
+
+			function ownSitesocketConnect(pair){				
+				if( io ){
+					ownSiteSocket = io(BACKEND_SOCKET_URL);					
+					ownSiteSocket.on("connect", () => {
+					   console.log("ownSitesocketConnected");
+					});
+
+					ownSiteSocket.on("klines_"+pair, (response) => {
+						const result = response
+						let replacePair = pair.replace("/","")
+						updateKlineChartData(result,replacePair)
+					});
+
+					ownSiteSocket.on("disconnect", (reason) => {
+					   console.log(`own socket disconnected due to ${reason}`);
+					});
+				}
+			}
+
+			async function connectBinanceKlineChartSocket(pair='',resolution='1d'){																			
+				let covertResolutions  = convertInterval(resolution)				
+				pair 	   			   = modifiedPair(pair)	
+				pair				   = pair.toLowerCase() 	
+				let klineStream	       = pair+"@kline_"+covertResolutions;     
+				let streamList	   = [klineStream]	
+				
+				let socketIns = pair+"_"+generateBinanceSocketNumber()
+				if( typeof DYNAMIC_BINANCE_SOCKET[socketIns] == "undefined" ){
+					let socketURL          = BINANCE_SOCKET_URL+klineStream;                      
+					let socket      = new WebSocket(socketURL)	  
+						
+					DYNAMIC_BINANCE_SOCKET[socketIns] = {
+						socket,
+						streamList
+					}					
+				}		
+
+				DYNAMIC_BINANCE_SOCKET[socketIns].socket.onmessage = async (e)=>{
+					if( e && e.data ){
+						let resultData = JSON.parse(e.data)                
+						if( resultData.stream && resultData.stream == klineStream ){
+							let binanceKlineChartData = resultData.data;                														
+							if( binanceKlineChartData.s ==  pair.toUpperCase() ){								
+								updateKlineChartData(binanceKlineChartData,pair.toUpperCase())
+								
+							}
+						}
+					}
+				}
+			}
+
+			async function connectOKXKlineChartSocket(pair='',resolution='1d'){																						
+				pair 	   			   = modifiedOKXPair(pair)	
+				let streamList = {
+					"op": "subscribe",
+					"args": [
+						{
+						"channel": `candle${convertOKXInterval(resolution)}`,
+						"instId": pair
+						},
+					]
+				}      				
+				let socketURL = OKX_SOCKET_URL			
+				
+				let socketIns = pair+"_"+generateOKXSocketNumber()
+
+				if( typeof DYNAMIC_OKX_SOCKET[socketIns] == "undefined" ){
+
+					let socket = new WebSocket(socketURL);
+
+					DYNAMIC_OKX_SOCKET[socketIns] = {
+						socket,
+						streamList
+					}					
+				}
+
+				DYNAMIC_OKX_SOCKET[socketIns].socket.onopen = () => {					
+					DYNAMIC_OKX_SOCKET[socketIns]?.socket?.send(JSON.stringify(DYNAMIC_OKX_SOCKET[socketIns].streamList));
+				}
+
+				DYNAMIC_OKX_SOCKET[socketIns].socket.onmessage = async (e) => {
+					if(e?.data){
+					
+						let resultData = JSON.parse(e.data);
+						if(!resultData.data?.length) return;
+						if (resultData?.arg && resultData?.data?.[0] && pair == DYNAMIC_OKX_SOCKET[socketIns]?.streamList?.args?.[0]?.instId && resultData.arg?.channel == DYNAMIC_OKX_SOCKET[socketIns]?.streamList.args?.[0]?.channel) {
+							updateKlineChartData(resultData.data?.[0],pair)
+						}
+					}
+				}						
+			}
+
+			let firstCurrency 	= '';
+			let secondCurrency 	= '';
+			function updateKlineChartData(response,pair=''){
+				const result = response
+				if (channelString) {
+				const _data = channelString.split('~')
+				if (_data[0] === "3") {        
+					return
+				}
+				}
+				var data;
+				if( OKX_STATUS ){
+					data = {
+						sub_type    : 0,      
+						exchange    : SITE_NAME,
+						to_sym      : secondCurrency,
+						from_sym    : firstCurrency,
+						trade_id    : result[0],
+						ts          : parseInt(result[0]),
+						volume      : parseFloat(result[5]),
+						open        : parseFloat(result[1]),
+						high        : parseFloat(result[2]),
+						low         : parseFloat(result[3]),
+						close       : parseFloat(result[4]),
+						price       : parseFloat(result[4]),
+					}
+				}
+				else{
+					data = {
+						sub_type    : 0,      
+						exchange    : SITE_NAME,
+						to_sym      : secondCurrency,
+						from_sym    : firstCurrency,
+						trade_id    : result.k.L,
+						ts          : parseInt(result.k.t, 10),
+						volume      : parseFloat(result.k.q),
+						price       : parseFloat(result.k.c),
+						open        : parseFloat(result.k.o),
+						close       : parseFloat(result.k.c),
+						high        : parseFloat(result.k.h),
+						low         : parseFloat(result.k.l),
+					}					
+				}
+				const channelString1 = `${data.sub_type}~${data.exchange}~${data.from_sym}~${data.to_sym}`
+				const sub            = _subscriptions.find(e => e.channelString === channelString1)		
+				
+				if (sub) {       
+					if (data.ts < sub.lastBar.time / 1000) {
+						return
+					}
+					let replacePair = "";
+					if(OKX_STATUS){
+						replacePair = sub?.symbolInfo?.name.replace("/","-")
+					}
+					else{
+						replacePair = sub?.symbolInfo?.name.replace("/","")
+
+					}
+					if(replacePair === pair ){						
+						var _lastBar = updateBar(data, sub)      						
+						sub.listener(_lastBar)      
+						sub.lastBar = _lastBar
+					}					
+				}
+			}
+
+			function updateBar(data, sub) {    
+				let lastBar     = sub.lastBar
+				let resolution  = sub.resolution
+				if (resolution.includes('D')) {
+				// 1 day in minutes === 1440
+				resolution = 1440
+				} else if (resolution.includes('W')) {
+				// 1 week in minutes === 10080
+				resolution = 10080
+				}
+				else if (resolution.includes('M')) {
+				// 1 Month in minutes === 43800
+				resolution = 43800
+				} 
+
+				let coeff       = resolution * 60    
+				let rounded     = Math.floor(data.ts / coeff) * coeff
+				let lastBarSec  = lastBar.time / 1000
+				let _lastBar
+
+				if (rounded > lastBarSec) {      
+				_lastBar = {      
+					time  : rounded,
+					open  : data.open,
+					high  : data.high,
+					low   : data.low,
+					close : data.price,
+					volume: data.volume
+				}
+				} else {      
+				if (data.price < lastBar.low) {
+					lastBar.low   = data.price
+				} else if (data.price > lastBar.high) {
+					lastBar.high  = data.price
+				}
+				lastBar.volume += data.volume
+				lastBar.close   = data.price
+				_lastBar        = lastBar
+				}    
+				return _lastBar
+			}
+					
+
+
+			function getChartData(){		
+				const configurationData     = {
+				supported_resolutions: ["1","5", "15", "30", "60", "240",'1D','1w','1M'],
+				exchanges: [{
+					value: SITE_NAME,
+					name: SITE_NAME,
+					desc: SITE_NAME
+				}],
+				symbols_types: [{
+					name: 'crypto',
+					value: 'crypto',
+				}],
+				};
+				
+				return {
+					onReady: (callback) => {						
+						setTimeout(() => callback(configurationData), 0);
+					},
+					searchSymbols: async (
+						userInput,
+						exchange,
+						symbolType,
+						onResultReadyCallback,
+					) => {
+						onResultReadyCallback([])
+					},
+					resolveSymbol:  (
+						symbolName,
+						onSymbolResolvedCallback,
+						onResolveErrorCallback,
+					) => {						
+						const symbols = TRADE_SYMBOLS
+						const symbolItem = symbols.find(({
+						full_name,
+						}) => { 
+						return full_name === symbolName
+						});
+						
+						const symbolInfo = {
+							ticker: symbolItem.full_name,
+							name: symbolItem.symbol,
+							description: symbolItem.description,
+							type: symbolItem.type,
+							session: '24x7',
+							timezone: 'Etc/UTC',          
+							exchange: symbolItem.exchange, 
+							interval:DEFAULT_INTERVAL,        
+							minmov: 1,
+							visible_plots_set: "ohlcv",          
+							pricescale: 100,
+							disabled_features     : ["left_toolbar"],
+							has_intraday: true,
+							intraday_multipliers: ["1","5", "15", "30", "60", "240",'1D','1w','1M'],			
+							has_weekly_and_monthly: true,
+							supported_resolutions: ["1","5", "15", "30", "60", "240",'1D','1w','1M'],
+							volume_precision: 2,
+							data_status: 'streaming',
+						};
+						setTimeout(function() {
+							onSymbolResolvedCallback(symbolInfo)        
+						}, 0)
+					},
+					getBars: async (symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) => {						
+						const { from, to, firstDataRequest, countBack } = periodParams;
+												
+						let currentResolution = "1d";
+						
+						if( resolution == '1D' ){
+							currentResolution = "1d"
+						}
+						else if( resolution == '1W' ){
+							currentResolution = "1w"
+						}
+						else if( resolution == '1M' ){
+							currentResolution = "1M"
+						}
+						else if( resolution < 60 ){
+							currentResolution = resolution+"m"
+						}
+						else{
+							resolution = resolution / 60
+							currentResolution = resolution+"h"
+						}
+						let splitPair = symbolInfo.name.split("/")
+						
+						firstCurrency  = splitPair[0]
+						secondCurrency = splitPair[1]
+
+						const CHART_DATA = await getTradeViewChartData(CURRENT_PAIR,currentResolution,timeConverter(from), timeConverter(to),1000,countBack);
+						if( CHART_DATA ){
+							var bars 		= CHART_DATA.map(el => {
+								let low     = el[3]
+								let high    = el[2]
+								let open    = el[1]
+								let close   = el[4]
+								let volume  = el[7]
+								return {
+									time  : +el[0],
+									low   : low.toString(),
+									high  : high,
+									open  : open,
+									close : close,
+									volume: +volume,                
+								}              
+							}) 
+	
+							if (firstDataRequest) {
+								var lastBar = bars[bars.length - 1]
+								history[symbolInfo.name] = { lastBar: lastBar }
+							}
+							if (bars.length) {
+								onHistoryCallback(bars, { noData: false })
+							} else {
+								onHistoryCallback([], { noData: true })
+							}	
+						}
+						else{
+							onHistoryCallback([], { noData: true })
+						}				
+					},
+					subscribeBars: async(symbolInfo, resolution, onRealtimeCallback, subscribeUID, onResetCacheNeededCallback) => {          
+						channelString = createChannelString(symbolInfo)
+						let a = channelString;
+						var newSub = {
+						channelString: a,
+						subscribeUID,
+						resolution,
+						symbolInfo,
+						lastBar: history[symbolInfo.name] ? history[symbolInfo.name].lastBar ? history[symbolInfo.name].lastBar : [] : [],
+						listener: onRealtimeCallback,
+						}
+						_subscriptions.push(newSub)			
+						
+						await disconnectSocket()
+						setTimeout(()=>{
+							connectSocket(CURRENT_PAIR,resolution)		
+						},10000)			
+						
+						
+					},
+					unsubscribeBars: async (subscriberUID) => {
+							let subIndex = _subscriptions.findIndex(e => e.subscribeUID === subscriberUID)
+							if (subIndex === -1) {          
+							return
+							}                          
+							_subscriptions.splice(subIndex, 1)                
+						}
+					} 					
+				}
+			
+			
+			async function TradeViewChart(siteName,pair,binanceStatusFlag=true,okXStatusFlag=false,TradeSymbols,liquidityType,backendHost,backendSocketURL,theme="Dark"){		
+				console.log(" =========> Pair: ", pair);
+
+				SITE_NAME 			 = siteName
+				BACKEND_SOCKET_URL	 = backendSocketURL;
+				CURRENT_PAIR		 = pair;
+				BACKEND_API_URL 	 = backendHost ? backendHost : BACKEND_API_URL;
+				BINANCE_STATUS  	 = binanceStatusFlag				
+				OKX_STATUS		     = okXStatusFlag;
+
+				await constructLiquidityURL(liquidityType)
+				TRADE_SYMBOLS		 = TradeSymbols
+				var chartdata 	     = await getChartData()				
+				TV_CHART_INSTANCE 	 = window.tvWidget = new TradingView.widget({
+					"container"           : "tv_chart_container",							
+					"background"          : "black",					
+					"symbol"              : `${SITE_NAME}:${pair}`,   
+					"datafeed"            : chartdata,      
+					"timezone"            : "exchange",
+					"theme"               : theme,
+					"interval"            : DEFAULT_INTERVAL,        
+					"withdateranges"      : true,            
+					"allow_symbol_change" : false,
+					"has_weekly_and_monthly": true,					
+					"save_image"          : true,	
+					"disabled_features"	  : ["left_toolbar"],
+					"show_popup_button"   : true,					
+					"popup_width"         : "1000",
+        			"popup_height"        : "650",
+					"library_path"        : 'charting_library/',
+					"locale"              : "en",  
+					"fullscreen"		  : true,					
+				});
+				
+				// window.addEventListener('DOMContentLoaded', initOnReady, false);
+				window.frames[0].focus();				
+			}
+
+			function constructLiquidityURL(liquidityType){
+				return new Promise((resolve,reject)=>{
+					let API_URL = ""
+					let SOCKET_URL = ""
+					if( BINANCE_STATUS ){
+						if(liquidityType == "demo"){
+							API_URL 	= "https://testnet.binance.vision"
+							SOCKET_URL	= "wss://testnet.binance.vision"
+						}	
+						else{
+							API_URL 	= "https://api.binance.com";
+							SOCKET_URL 	= "wss://stream.binance.com:9443";
+						}
+						BINANCE_SOCKET_URL    	 = SOCKET_URL+"/stream?streams="
+						BINANCE_API_URL    	 	 = API_URL+"/api/v3/klines?symbol="
+						resolve(true)
+					}
+					else if( OKX_STATUS ){
+						API_URL 				 = "https://www.okx.com"
+						SOCKET_URL 			  	 = "wss://ws.okx.com:8443"
+						OKX_SOCKET_URL    	     = SOCKET_URL+"/ws/v5/business"
+						OKX_API_URL    	 	     = API_URL+"/api/v5/"
+						resolve(true)
+					}
+					else{
+						resolve(true)
+					}	
+				})
+			}
+			
+			function changeTradeViewTheme(theme){
+				if(TV_CHART_INSTANCE){
+					TV_CHART_INSTANCE.changeTheme(theme)				
+					window.frames[0].focus();		
+				}
+			}
+
+			let SAMPLE_TRADE_SYMBOLS = [					
+				{
+					"symbol": "ETH/USDT",
+					"full_name": "Swapful:ETH/USDT",
+					"description": "ETH/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "CYCE/USDT",
+					"full_name": "Swapful:CYCE/USDT",
+					"description": "CYCE/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BTC/USDT",
+					"full_name": "Swapful:BTC/USDT",
+					"description": "BTC/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "LTC/USDT",
+					"full_name": "Swapful:LTC/USDT",
+					"description": "LTC/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BNB/USDT",
+					"full_name": "Swapful:BNB/USDT",
+					"description": "BNB/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "MATIC/USDT",
+					"full_name": "Swapful:MATIC/USDT",
+					"description": "MATIC/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SOL/USDT",
+					"full_name": "Swapful:SOL/USDT",
+					"description": "SOL/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "XRP/USDT",
+					"full_name": "Swapful:XRP/USDT",
+					"description": "XRP/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOGE/USDT",
+					"full_name": "Swapful:DOGE/USDT",
+					"description": "DOGE/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ADA/USDT",
+					"full_name": "Swapful:ADA/USDT",
+					"description": "ADA/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOT/USDT",
+					"full_name": "Swapful:DOT/USDT",
+					"description": "DOT/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BUSD/USDT",
+					"full_name": "Swapful:BUSD/USDT",
+					"description": "BUSD/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ETH/BTC",
+					"full_name": "Swapful:ETH/BTC",
+					"description": "ETH/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "LTC/BTC",
+					"full_name": "Swapful:LTC/BTC",
+					"description": "LTC/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BNB/BTC",
+					"full_name": "Swapful:BNB/BTC",
+					"description": "BNB/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "MATIC/BTC",
+					"full_name": "Swapful:MATIC/BTC",
+					"description": "MATIC/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SOL/BTC",
+					"full_name": "Swapful:SOL/BTC",
+					"description": "SOL/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "XRP/BTC",
+					"full_name": "Swapful:XRP/BTC",
+					"description": "XRP/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOGE/BTC",
+					"full_name": "Swapful:DOGE/BTC",
+					"description": "DOGE/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ADA/BTC",
+					"full_name": "Swapful:ADA/BTC",
+					"description": "ADA/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOT/BTC",
+					"full_name": "Swapful:DOT/BTC",
+					"description": "DOT/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "LTC/ETH",
+					"full_name": "Swapful:LTC/ETH",
+					"description": "LTC/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BNB/ETH",
+					"full_name": "Swapful:BNB/ETH",
+					"description": "BNB/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "MATIC/ETH",
+					"full_name": "Swapful:MATIC/ETH",
+					"description": "MATIC/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SOL/ETH",
+					"full_name": "Swapful:SOL/ETH",
+					"description": "SOL/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "XRP/ETH",
+					"full_name": "Swapful:XRP/ETH",
+					"description": "XRP/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOGE/ETH",
+					"full_name": "Swapful:DOGE/ETH",
+					"description": "DOGE/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ADA/ETH",
+					"full_name": "Swapful:ADA/ETH",
+					"description": "ADA/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOT/ETH",
+					"full_name": "Swapful:DOT/ETH",
+					"description": "DOT/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ULX/BTC",
+					"full_name": "Swapful:ULX/BTC",
+					"description": "ULX/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ULX/ETH",
+					"full_name": "Swapful:ULX/ETH",
+					"description": "ULX/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ULX/USDT",
+					"full_name": "Swapful:ULX/USDT",
+					"description": "ULX/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ETH/369T",
+					"full_name": "Swapful:ETH/369T",
+					"description": "ETH/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BTC/369T",
+					"full_name": "Swapful:BTC/369T",
+					"description": "BTC/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BNB/369T",
+					"full_name": "Swapful:BNB/369T",
+					"description": "BNB/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SOL/369T",
+					"full_name": "Swapful:SOL/369T",
+					"description": "SOL/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "XRP/369T",
+					"full_name": "Swapful:XRP/369T",
+					"description": "XRP/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOGE/369T",
+					"full_name": "Swapful:DOGE/369T",
+					"description": "DOGE/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ADA/369T",
+					"full_name": "Swapful:ADA/369T",
+					"description": "ADA/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "TRY/369T",
+					"full_name": "Swapful:TRY/369T",
+					"description": "TRY/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "EUR/369T",
+					"full_name": "Swapful:EUR/369T",
+					"description": "EUR/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "DOT/369T",
+					"full_name": "Swapful:DOT/369T",
+					"description": "DOT/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "USDT/369T",
+					"full_name": "Swapful:USDT/369T",
+					"description": "USDT/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "ULX/369T",
+					"full_name": "Swapful:ULX/369T",
+					"description": "ULX/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "BUSD/369T",
+					"full_name": "Swapful:BUSD/369T",
+					"description": "BUSD/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "mBUSD/369T",
+					"full_name": "Swapful:mBUSD/369T",
+					"description": "mBUSD/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "MT/369T",
+					"full_name": "Swapful:MT/369T",
+					"description": "MT/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SAND/ETH",
+					"full_name": "Swapful:SAND/ETH",
+					"description": "SAND/ETH",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SAND/BTC",
+					"full_name": "Swapful:SAND/BTC",
+					"description": "SAND/BTC",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SAND/369T",
+					"full_name": "Swapful:SAND/369T",
+					"description": "SAND/369T",
+					"exchange": "Swapful",
+					"type": "crypto"
+				},
+				{
+					"symbol": "SAND/USDT",
+					"full_name": "Swapful:SAND/USDT",
+					"description": "SAND/USDT",
+					"exchange": "Swapful",
+					"type": "crypto"
+				}
+			]				
+						
+			let status = false
+			async function changePair(PAIR){
+				status = await disconnectSocket()
+				
+				if(status){
+					let api_url 	= "";
+					let socket_url 	= "";
+
+					if(BINANCE_STATUS){
+						api_url 	= "https://api.binance.com";
+						socket_url 	= "wss://stream.binance.com:9443";
+					}
+					else if(OKX_STATUS){
+						api_url 	= "https://www.okx.com";
+						socket_url 	= "wss://ws.okx.com:8443";
+					}
+					
+					TradeViewChart("Swapful",PAIR,BINANCE_STATUS,OKX_STATUS,SAMPLE_TRADE_SYMBOLS,"demo","http://localhost:2005/graphql","http://localhost:2004")
+					status = false;
+				}
+			}
+
+			function changeLiquidity(binanceStatus,OKXStatus){
+				if( binanceStatus && !OKXStatus ){
+					disconnectOKXKlineChartSocket()
+					disconnectOwnSocket()
+					TradeViewChart("Swapful","ETH/USDT",true,false,SAMPLE_TRADE_SYMBOLS,"prod","http://localhost:2005/graphql","http://localhost:2004")
+				}
+				else if( OKXStatus  && !binanceStatus ){
+					disconnectBinanceKlineChartSocket()
+					disconnectOwnSocket()
+					TradeViewChart("Swapful","ETH/USDT",false,true,SAMPLE_TRADE_SYMBOLS,"prod","http://localhost:2005/graphql","http://localhost:2004")
+				}
+				else{
+					disconnectBinanceKlineChartSocket()
+					disconnectOKXKlineChartSocket()
+					TradeViewChart("Swapful","ETH/USDT",false,false,SAMPLE_TRADE_SYMBOLS,"prod","http://localhost:2005/graphql","http://localhost:2004")
+				}
+			}
+			
+		</script>
+	</head>
+
+	<body style="margin:0px;">
+<!--		<div>-->
+<!--			<button onClick="changePair('ETH/USDT')">ETH/USDT</button>-->
+<!--			<button onClick="changePair('BTC/USDT')">BTC/USDT</button>-->
+<!--			<button onClick="changePair('BNB/USDT')">BNB/USDT</button>-->
+
+<!--		</div>-->
+<!--		<Br></Br>-->
+<!--		<div>-->
+<!--			&lt;!&ndash; <button onClick="changeLiquidity(true,false)">BINANCE Liquidity</button>-->
+<!--			<button onClick="changeLiquidity(false,true)">OKX Liquidity</button>-->
+<!--			<button onClick="changeLiquidity(false,false)">OWN Liquidity</button> &ndash;&gt;-->
+<!--		</div>-->
+		<div id="tv_chart_container"></div>
+	</body>
+
+</html>
+

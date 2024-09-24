@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
+  <defs>
+    <clipPath id="clip-preferences">
+      <rect width="100" height="100"/>
+    </clipPath>
+  </defs>
+  <g id="preferences" clip-path="url(#clip-preferences)">
+    <g id="preferences-2" data-name="preferences" transform="translate(2 5)">
+      <path id="Path_409" data-name="Path 409" d="M70.091,14.955A12.955,12.955,0,1,1,83.045,27.909,12.955,12.955,0,0,1,70.091,14.955ZM5.318,19.273H57.136a4.318,4.318,0,0,0,0-8.636H5.318a4.318,4.318,0,0,0,0,8.636ZM31.227,32.227A12.955,12.955,0,0,0,19.05,40.864H5.318a4.318,4.318,0,0,0,0,8.636H19.05A12.955,12.955,0,1,0,31.227,32.227Zm60.455,8.636H57.136a4.318,4.318,0,0,0,0,8.636H91.682a4.318,4.318,0,0,0,0-8.636ZM39.864,71.091H5.318a4.318,4.318,0,1,0,0,8.636H39.864a4.318,4.318,0,1,0,0-8.636Zm51.818,0H77.95a12.955,12.955,0,1,0,0,8.636H91.682a4.318,4.318,0,1,0,0-8.636Z" transform="translate(0 0)" fill="#72798b"/>
+    </g>
+  </g>
+</svg>

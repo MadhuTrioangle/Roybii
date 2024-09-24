@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <g id="P2P_payment_tick" data-name="P2P payment tick" transform="translate(-131 -323)">
+    <circle id="Ellipse_46" data-name="Ellipse 46" cx="10" cy="10" r="10" transform="translate(131 323)" fill="#fff"/>
+    <path id="Ellipse_46_-_Outline" data-name="Ellipse 46 - Outline" d="M10,1a9,9,0,1,0,9,9,9.01,9.01,0,0,0-9-9m0-1A10,10,0,1,1,0,10,10,10,0,0,1,10,0Z" transform="translate(131 323)" fill="#f0b80c"/>
+    <path id="Path_401" data-name="Path 401" d="M138.743,332.41a.75.75,0,0,1-.535-.224l-1.706-1.735a.75.75,0,1,1,1.07-1.052l1.171,1.191,4.759-4.841a.75.75,0,1,1,1.07,1.052l-5.294,5.385A.75.75,0,0,1,138.743,332.41Z" transform="translate(0.463 4.224)" fill="#f0b80c"/>
+  </g>
+</svg>

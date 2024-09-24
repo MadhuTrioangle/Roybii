@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="175" height="65" viewBox="0 0 175 65">
+  <defs>
+    <clipPath id="clip-Play_Store">
+      <rect width="175" height="65"/>
+    </clipPath>
+  </defs>
+  <g id="Play_Store" data-name="Play Store" clip-path="url(#clip-Play_Store)">
+    <rect id="Rectangle_17068" data-name="Rectangle 17068" width="170" height="60" rx="5" transform="translate(3 3)" fill="#12161c"/>
+    <text id="Google_Play" data-name="Google Play" transform="translate(56.121 49)" fill="#fff" font-size="18" font-family="GoogleSans-Bold, Google Sans" font-weight="700"><tspan x="0" y="0">Google Play</tspan></text>
+    <text id="Download_from" data-name="Download from" transform="translate(56.121 25)" fill="#fff" font-size="14" font-family="GoogleSans-Regular, Google Sans"><tspan x="0" y="0">Download from</tspan></text>
+    <g id="_10160912521581334478" data-name="10160912521581334478" transform="translate(-122.721 -112.283)">
+      <path id="Path_404" data-name="Path 404" d="M157.452,150.53,140.061,167.6a3.757,3.757,0,0,1-1.461-2.964V136.464a3.677,3.677,0,0,1,1.461-2.964Z" transform="translate(0 -4.759)" fill="#2196f3"/>
+      <path id="Path_405" data-name="Path 405" d="M287.816,217.075a3.754,3.754,0,0,1-1.906,3.27l-5.468,3.033L274,217.089l6.442-6.289,5.468,3.061A3.649,3.649,0,0,1,287.816,217.075Z" transform="translate(-116.561 -71.304)" fill="#ffc107"/>
+      <path id="Path_406" data-name="Path 406" d="M172.933,262.289l-19.826,11.075a3.755,3.755,0,0,1-1.781.445,3.379,3.379,0,0,1-1.837-.5,3.635,3.635,0,0,1-.39-.237L166.492,256Z" transform="translate(-9.039 -110.216)" fill="#f44336"/>
+      <path id="Path_407" data-name="Path 407" d="M172.933,139.482l-6.442,6.289L149.1,128.727a3.633,3.633,0,0,1,.39-.237,3.581,3.581,0,0,1,3.617-.056Z" transform="translate(-9.039)" fill="#4caf50"/>
+    </g>
+  </g>
+</svg>

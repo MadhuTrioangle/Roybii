@@ -1,0 +1,6 @@
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/darksplash"
+    android:insetLeft="38dp"
+    android:insetRight="38dp"
+    android:insetTop="38dp"
+    android:insetBottom="38dp"/>

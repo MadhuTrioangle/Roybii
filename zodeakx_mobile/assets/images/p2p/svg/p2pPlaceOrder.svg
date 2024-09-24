@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="63" height="63" viewBox="0 0 63 63">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffe253"/>
+      <stop offset="1" stop-color="#ffd615"/>
+    </linearGradient>
+    <filter id="Rectangle_17400" x="0" y="0" width="63" height="63" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#fc0" flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_864" data-name="Group 864" transform="translate(-38 -426)">
+    <g transform="matrix(1, 0, 0, 1, 38, 426)" filter="url(#Rectangle_17400)">
+      <rect id="Rectangle_17400-2" data-name="Rectangle 17400" width="45" height="45" rx="15" transform="translate(9 6)" fill="url(#linear-gradient)"/>
+    </g>
+    <g id="Group_777" data-name="Group 777" transform="translate(25.1 -1.495)">
+      <path id="Subtraction_2" data-name="Subtraction 2" d="M20.914,14.073H8.605a1.429,1.429,0,0,1-1.195-.879L5.968,8.8,4.527,4.4,4.21,3.524H2.061a1.8,1.8,0,0,1-.284.023A1.782,1.782,0,0,1,.339.72,1.763,1.763,0,0,1,1.5.008H1.464l.025,0h.08c.036,0,.072,0,.106,0a1.547,1.547,0,0,1,.317,0H5.9A1.75,1.75,0,0,1,7.447.992L8.782,3.524h6.6V7.291l-1.33-1.33A1.171,1.171,0,1,0,12.4,7.618l3.315,3.316a1.2,1.2,0,0,0,.225.182l.012.009.011.007.014.007,0,0,.008,0,.013.008.011.006.018.009.007,0,0,0a.107.107,0,0,1,.022.011h0l.023.011a1.255,1.255,0,0,0,.3.085l.026,0,.016,0h.011l.006,0h.031a.068.068,0,0,0,.02,0h.168a1.2,1.2,0,0,0,.382-.1l.01-.005.017-.007.013-.008.011-.006.015-.008.011-.006.015-.009.007,0,.016-.009.011-.007a1.232,1.232,0,0,0,.234-.194L20.72,7.618a1.171,1.171,0,1,0-1.656-1.656l-1.332,1.33V3.524h6.663a.577.577,0,0,1,.489.223.732.732,0,0,1,.073.656l-2.848,8.791A1.385,1.385,0,0,1,20.914,14.073Z" transform="translate(29.901 446.495)" fill="#fff"/>
+      <path id="Subtraction_4" data-name="Subtraction 4" d="M1.758,0A1.741,1.741,0,0,0,0,1.758,1.741,1.741,0,0,0,1.758,3.516,1.741,1.741,0,0,0,3.516,1.758,1.741,1.741,0,0,0,1.758,0ZM12.307,0a1.741,1.741,0,0,0-1.758,1.758,1.758,1.758,0,1,0,3.516,0A1.741,1.741,0,0,0,12.307,0Z" transform="translate(37.628 463.303)" fill="#ffec90"/>
+    </g>
+  </g>
+</svg>

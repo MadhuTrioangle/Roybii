@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.381" height="18" viewBox="0 0 20.381 18">
+  <g id="Group_1363" data-name="Group 1363" transform="translate(-37 -436)">
+    <g id="Group_1362" data-name="Group 1362" transform="translate(39.084 436)">
+      <path id="Subtraction_6" data-name="Subtraction 6" d="M5.572,11.143a5.571,5.571,0,1,1,5.571-5.571A5.578,5.578,0,0,1,5.572,11.143Zm0-8.183h0L2.96,5.571,5.572,8.183,8.183,5.571,5.572,2.96Z" transform="translate(0 6.857)" fill="#b1b2b4"/>
+      <path id="Subtraction_7" data-name="Subtraction 7" d="M6.828,11h0A5.553,5.553,0,0,0,1.285,6a5.6,5.6,0,0,0-1.256.142A5.661,5.661,0,0,1,0,5.571,5.571,5.571,0,1,1,6.829,11Z" transform="translate(5.143 0)" fill="#b1b2b4"/>
+    </g>
+    <path id="Icon_awesome-caret-down" data-name="Icon awesome-caret-down" d="M.407,3.429H5.638a.406.406,0,0,0,.287-.693L3.31.119a.407.407,0,0,0-.575,0L.12,2.735A.406.406,0,0,0,.407,3.429Z" transform="translate(57.381 448.483) rotate(128)" fill="#b1b2b4"/>
+    <path id="Icon_awesome-caret-down-2" data-name="Icon awesome-caret-down" d="M.407,3.429H5.638a.406.406,0,0,0,.287-.693L3.31.119a.407.407,0,0,0-.575,0L.12,2.735A.406.406,0,0,0,.407,3.429Z" transform="matrix(0.588, -0.809, 0.809, 0.588, 37, 440.89)" fill="#b1b2b4"/>
+  </g>
+</svg>
