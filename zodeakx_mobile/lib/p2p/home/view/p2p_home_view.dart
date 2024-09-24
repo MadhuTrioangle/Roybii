@@ -217,7 +217,7 @@ class _CommonViewState extends State<P2PHomeView>
                       height: 15,
                       decoration: BoxDecoration(
                         color: themeSupport().isSelectedDarkMode()
-                            ? card_dark
+                            ? Colors.red
                             : white,
                         borderRadius: BorderRadius.circular(
                           50.0,
